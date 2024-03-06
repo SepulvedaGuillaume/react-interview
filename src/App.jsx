@@ -1,68 +1,42 @@
-import { movies$ } from "./movies";
 import { useEffect, useState } from "react";
 import Select from "react-select";
 import Movies from "./components/Movies";
+import {
+  fetchMovies,
+  handleToggleLikeDislike,
+  handleDelete,
+} from "./movieActions";
+import {
+  getFilteredMovies,
+  handleItemsPerPageChange,
+  calculateTotalPages,
+  itemsPerPageOptions,
+} from "./pagination";
+import Pagination from "./components/Pagination";
 
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(4);
 
   useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const moviesData = await movies$;
-        setMovies(moviesData);
+    const fetchData = async () => {
+      const moviesData = await fetchMovies();
+      setMovies(moviesData);
 
-        const categoriesArray = moviesData.map((movie) => movie.category);
-        const uniqueCategories = [...new Set(categoriesArray)];
-        const categories = uniqueCategories.map((category) => ({
-          value: category,
-          label: category,
-        }));
-        setCategories(categories);
-      } catch (error) {
-        console.error("Error fetching movies:", error);
-      }
+      const categoriesArray = moviesData.map((movie) => movie.category);
+      const uniqueCategories = [...new Set(categoriesArray)];
+      const categories = uniqueCategories.map((category) => ({
+        value: category,
+        label: category,
+      }));
+      setCategories(categories);
     };
 
-    fetchMovies();
+    fetchData();
   }, []);
-
-  const handleDelete = (id) => {
-    const newMovies = movies.filter((movie) => movie.id !== id);
-    setMovies(newMovies);
-  };
-
-  const handleToggleLikeDislike = (id, type) => {
-    const updatedMovies = movies.map((movie) => {
-      if (movie.id === id) {
-        if (type === "like" && !movie.isLiked && !movie.isDisliked) {
-          return { ...movie, likes: movie.likes + 1, isLiked: true };
-        } else if (type === "dislike" && !movie.isLiked && !movie.isDisliked) {
-          return { ...movie, dislikes: movie.dislikes + 1, isDisliked: true };
-        } else if (type === "like" && !movie.isLiked && movie.isDisliked) {
-          return {
-            ...movie,
-            likes: movie.likes + 1,
-            dislikes: movie.dislikes - 1,
-            isLiked: true,
-            isDisliked: false,
-          };
-        } else if (type === "dislike" && movie.isLiked && !movie.isDisliked) {
-          return {
-            ...movie,
-            dislikes: movie.dislikes + 1,
-            likes: movie.likes - 1,
-            isDisliked: true,
-            isLiked: false,
-          };
-        }
-      }
-      return movie;
-    });
-    setMovies(updatedMovies);
-  };
 
   const colourStyles = {
     option: (styles, { isFocused }) => {
@@ -74,20 +48,10 @@ export default function App() {
     },
   };
 
-  const getFilteredMovies = () => {
-    if (filteredCategories.length === 0) {
-      return movies;
-    } else {
-      return movies.filter((movie) =>
-        filteredCategories.includes(movie.category)
-      );
-    }
-  };
-
   return (
     <>
       <h1 className="text-4xl font-bold text-center my-8">React Interview</h1>
-      <div className="container mx-auto flex flex-col justify-center items-center">
+      <div className="container mx-auto flex flex-col justify-center items-center my-4">
         <div className="filter w-fit mb-4">
           <Select
             options={categories}
@@ -100,13 +64,49 @@ export default function App() {
             isMulti
             name="categories"
             placeholder="Select categories ..."
+            value={categories.filter((category) =>
+              filteredCategories.includes(category.value)
+            )}
             styles={colourStyles}
           />
         </div>
         <Movies
-          movies={getFilteredMovies()}
-          handleToggleLikeDislike={handleToggleLikeDislike}
-          handleDelete={handleDelete}
+          movies={getFilteredMovies(
+            movies,
+            currentPage,
+            itemsPerPage,
+            filteredCategories
+          )}
+          handleToggleLikeDislike={(id, type) =>
+            handleToggleLikeDislike(movies, id, type, setMovies)
+          }
+          handleDelete={handleDelete(
+            movies,
+            setMovies,
+            filteredCategories,
+            setFilteredCategories,
+            setCategories,
+            categories
+          )}
+        />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={calculateTotalPages(movies, itemsPerPage)}
+          handlePreviousPage={() =>
+            setCurrentPage((prevPage) => Math.max(prevPage - 1, 1))
+          }
+          handleNextPage={() =>
+            setCurrentPage((prevPage) =>
+              Math.min(prevPage + 1, calculateTotalPages(movies, itemsPerPage))
+            )
+          }
+          handleItemsPerPageChange={handleItemsPerPageChange(
+            setItemsPerPage,
+            setCurrentPage
+          )}
+          itemsPerPageOptions={itemsPerPageOptions}
+          itemsPerPage={itemsPerPage}
+          colourStyles={colourStyles}
         />
       </div>
     </>

@@ -6,21 +6,27 @@ export default function MovieCard({
   return (
     <div
       key={movie.id}
-      className="flex flex-col justify-center items-center bg-gray-800 p-4 m-4 shadow-md rounded-md transform transition-transform duration-500 hover:scale-105"
+      className="relative flex flex-col justify-center items-center border-solid border-2 border-white-500 bg-gray-800 p-6 m-4 shadow-lg rounded-md transform transition-transform duration-300 hover:scale-105"
     >
-      <h2 className="text-2xl font-bold text-white">{movie.title}</h2>
-      <p className="text-sm text-gray-400">{movie.category}</p>
+      <button
+        className="absolute top-2 right-2 text-white hover:text-red-500 text-xl font-semibold transition duration-300"
+        onClick={() => handleDelete(movie.id)}
+      >
+        X
+      </button>
+      <h2 className="text-3xl font-bold text-white mb-2 mt-2">{movie.title}</h2>
+      <p className="text-xl font-semibold text-gray-300">{movie.category}</p>
       <div className="flex justify-between mt-4">
         <button
-          className={`text-white px-4 py-2 mx-2 rounded-md ${
-            movie.isLiked ? "bg-green-500" : "bg-green-700 "
+          className={`text-white px-6 py-3 mx-2 rounded-md hover:bg-green-600 transition duration-300 ${
+            movie.isLiked ? "bg-green-500" : "bg-green-700"
           }`}
           onClick={() => handleToggleLikeDislike(movie.id, "like")}
         >
           {movie.likes > 1 ? `${movie.likes} Likes` : `${movie.likes} Like`}
         </button>
         <button
-          className={`text-white px-4 py-2 mx-2 rounded-md ${
+          className={`text-white px-6 py-3 mx-2 rounded-md hover:bg-red-600 transition duration-300 ${
             movie.isDisliked ? "bg-red-500" : "bg-red-700"
           }`}
           onClick={() => handleToggleLikeDislike(movie.id, "dislike")}
@@ -28,14 +34,6 @@ export default function MovieCard({
           {movie.dislikes > 1
             ? `${movie.dislikes} Dislikes`
             : `${movie.dislikes} Dislike`}
-        </button>
-      </div>
-      <div className="mt-4">
-        <button
-          className="bg-gray-600 text-white px-4 py-2 mx-2 rounded-md"
-          onClick={() => handleDelete(movie.id)}
-        >
-          Supprimer
         </button>
       </div>
     </div>
