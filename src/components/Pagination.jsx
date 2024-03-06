@@ -6,16 +6,24 @@ export default function Pagination({
   handlePreviousPage,
   handleNextPage,
   handleItemsPerPageChange,
-  itemsPerPageOptions,
   itemsPerPage,
   colourStyles,
 }) {
+  
+  const itemsPerPageOptions = [
+    { value: 4, label: "4 par page" },
+    { value: 8, label: "8 par page" },
+    { value: 12, label: "12 par page" },
+  ];
+
   return (
     <div className="pagination-controls mt-6 flex flex-col items-center">
       <div className="flex content-center items-center mb-6">
         <button
           className={`text-white px-6 py-3 mx-2 rounded-md transition duration-300 ${
-            currentPage === 1 ? "bg-gray-400" : "bg-indigo-500 hover:bg-indigo-600"
+            currentPage === 1
+              ? "bg-gray-400"
+              : "bg-indigo-500 hover:bg-indigo-600"
           }`}
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
@@ -27,7 +35,9 @@ export default function Pagination({
         </span>
         <button
           className={`text-white px-6 py-3 mx-2 rounded-md transition duration-300 ${
-            currentPage === totalPages ? "bg-gray-400" : "bg-indigo-500 hover:bg-indigo-600"
+            currentPage === totalPages
+              ? "bg-gray-400"
+              : "bg-indigo-500 hover:bg-indigo-600"
           }`}
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
