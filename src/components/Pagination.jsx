@@ -20,7 +20,7 @@ export default function Pagination({
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
         >
-          Précédent
+          Previous
         </button>
         <span className="mx-4 text-lg">
           Page {currentPage} of {totalPages}
@@ -32,7 +32,7 @@ export default function Pagination({
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
         >
-          Suivant
+          Next
         </button>
       </div>
       <Select
