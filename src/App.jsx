@@ -126,7 +126,7 @@ export default function App() {
     setCurrentPage(1);
   };
 
-  const totalPages = Math.ceil(movies.length / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(movies.length / itemsPerPage));
 
   return (
     <>
