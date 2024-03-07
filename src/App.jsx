@@ -121,14 +121,12 @@ export default function App() {
     );
   };
 
-  const handleItemsPerPageChange =
-    (setItemsPerPage, setCurrentPage) => (selectedOption) => {
-      setItemsPerPage(selectedOption.value);
-      setCurrentPage(1);
-    };
+  const handleItemsPerPageChange = (selectedOption) => {
+    setItemsPerPage(selectedOption.value);
+    setCurrentPage(1);
+  };
 
-  const calculateTotalPages = (movies, itemsPerPage) =>
-    Math.ceil(movies.length / itemsPerPage);
+  const totalPages = Math.ceil(movies.length / itemsPerPage);
 
   return (
     <>
@@ -162,22 +160,14 @@ export default function App() {
           />
           <Pagination
             currentPage={currentPage}
-            totalPages={calculateTotalPages(movies, itemsPerPage)}
+            totalPages={totalPages}
             handlePreviousPage={() =>
               setCurrentPage((prevPage) => Math.max(prevPage - 1, 1))
             }
             handleNextPage={() =>
-              setCurrentPage((prevPage) =>
-                Math.min(
-                  prevPage + 1,
-                  calculateTotalPages(movies, itemsPerPage)
-                )
-              )
+              setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages))
             }
-            handleItemsPerPageChange={handleItemsPerPageChange(
-              setItemsPerPage,
-              setCurrentPage
-            )}
+            handleItemsPerPageChange={handleItemsPerPageChange}
             itemsPerPage={itemsPerPage}
             colourStyles={colourStyles}
           />
